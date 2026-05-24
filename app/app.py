@@ -23,8 +23,14 @@ if st.button("Predict"):
     }])
 
     prediction = model.predict(input_data)[0]
+    probabilities = model.predict_proba(input_data)[0]
+    fail_probability = probabilities[0]
+    pass_probability = probabilities[1]
 
     if prediction == 1:
         st.success("Prediction: Pass")
     else:
         st.error("Prediction: Fail")
+
+    st.write(f"Pass probability: {pass_probability:.2%}")
+    st.write(f"Fail probability: {fail_probability:.2%}")
