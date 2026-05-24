@@ -82,3 +82,5 @@ streamlit run app/app.py
 ## Author
 
 Hesandu Ruwanpathirana
+
+## Live App - https://student-success-predictor-n423v9vzpr2mbb2bvwijbv.streamlit.app
