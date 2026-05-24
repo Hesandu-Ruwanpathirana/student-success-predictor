@@ -44,13 +44,44 @@ if st.button("Predict"):
 
     prediction = model.predict(input_data)[0]
     probabilities = model.predict_proba(input_data)[0]
+
     fail_probability = probabilities[0]
     pass_probability = probabilities[1]
 
     if prediction == 1:
         st.success("Prediction: Pass")
+        predicted_label = "pass"
     else:
         st.error("Prediction: Fail")
+        predicted_label = "fail"
 
+    st.subheader("Prediction Confidence")
     st.write(f"Pass probability: {pass_probability:.2%}")
     st.write(f"Fail probability: {fail_probability:.2%}")
+
+    conn = sqlite3.connect("students.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO students (
+            study_hours,
+            attendance,
+            assignments_completed,
+            quiz_score,
+            sleep_hours,
+            final_result
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, (
+        study_hours,
+        attendance,
+        assignments_completed,
+        quiz_score,
+        sleep_hours,
+        predicted_label
+    ))
+
+    conn.commit()
+    conn.close()
+
+    st.info("Prediction saved to database.")
