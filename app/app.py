@@ -1,11 +1,31 @@
 import streamlit as st
 import joblib
 import pandas as pd
+import sqlite3
 
 model = joblib.load("models/student_success_model.pkl")
 
 st.title("Student Success Predictor")
 st.write("Enter student details below to predict pass or fail.")
+
+conn = sqlite3.connect("students.db")
+cursor = conn.cursor()
+
+cursor.execute("SELECT COUNT(*) FROM students")
+total_students = cursor.fetchone()[0]
+
+cursor.execute("SELECT AVG(quiz_score) FROM students")
+average_quiz_score = cursor.fetchone()[0]
+
+cursor.execute("SELECT COUNT(*) FROM students WHERE final_result = 'pass'")
+total_pass = cursor.fetchone()[0]
+
+conn.close()
+
+col1, col2, col3 = st.columns(3)
+col1.metric("Total Students", total_students)
+col2.metric("Average Quiz Score", f"{average_quiz_score:.2f}")
+col3.metric("Students Passed", total_pass)
 
 study_hours = st.number_input("Study Hours", min_value=0, max_value=12, value=4)
 attendance = st.number_input("Attendance (%)", min_value=0, max_value=100, value=80)
